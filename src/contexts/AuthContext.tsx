@@ -38,14 +38,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
       
       if (currentUser) {
-        // Fetch or create user profile
-        const userRef = doc(db, 'users', currentUser.uid);
-        const userSnap = await getDoc(userRef);
-        
-        if (userSnap.exists()) {
-          setProfile(userSnap.data() as UserProfile);
-        } else {
-          const newProfile: UserProfile = {
+        try {
+          // Fetch or create user profile
+          const userRef = doc(db, 'users', currentUser.uid);
+          const userSnap = await getDoc(userRef);
+          
+          if (userSnap.exists()) {
+            setProfile(userSnap.data() as UserProfile);
+          } else {
+            const newProfile: UserProfile = {
+              uid: currentUser.uid,
+              email: currentUser.email || '',
+              displayName: currentUser.displayName || '',
+              plan: 'free',
+              level: 1,
+              xp: 0,
+              totalSimulations: 0,
+              createdAt: serverTimestamp(),
+            };
+            await setDoc(userRef, newProfile);
+            setProfile(newProfile);
+          }
+        } catch (error) {
+          console.error("Error fetching or creating user profile:", error);
+          // Fallback profile so the user can still use the app
+          setProfile({
             uid: currentUser.uid,
             email: currentUser.email || '',
             displayName: currentUser.displayName || '',
@@ -53,10 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             level: 1,
             xp: 0,
             totalSimulations: 0,
-            createdAt: serverTimestamp(),
-          };
-          await setDoc(userRef, newProfile);
-          setProfile(newProfile);
+            createdAt: new Date(),
+          });
         }
       } else {
         setProfile(null);

@@ -98,7 +98,7 @@ service cloud.firestore {
              data.level is number && data.level >= 1 &&
              data.xp is number && data.xp >= 0 &&
              data.totalSimulations is number && data.totalSimulations >= 0 &&
-             data.createdAt is timestamp &&
+             (data.createdAt is timestamp || data.createdAt == request.time) &&
              (!('role' in data) || data.role in ['user', 'admin']);
     }
 
