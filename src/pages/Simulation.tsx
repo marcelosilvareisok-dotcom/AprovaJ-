@@ -72,8 +72,108 @@ const MOCK_QUESTIONS = [
     ],
     correctOptionIndex: 2,
     explanation: 'A proposição equivalente à condicional (P -> Q) é a sua contrapositiva (~Q -> ~P). Portanto, "Se a rua não está molhada, então não choveu".'
+  },
+  {
+    id: 'q6',
+    subject: 'Direito Previdenciário',
+    text: '(INSS) A Seguridade Social compreende um conjunto integrado de ações de iniciativa dos Poderes Públicos e da sociedade, destinadas a assegurar os direitos relativos à:',
+    options: [
+      'Saúde, Previdência e Educação.',
+      'Saúde, Previdência e Assistência Social.',
+      'Previdência, Assistência Social e Segurança Pública.',
+      'Saúde, Assistência Social e Moradia.'
+    ],
+    correctOptionIndex: 1,
+    explanation: 'Segundo o art. 194 da CF/88, a seguridade social compreende um conjunto integrado de ações (...) destinadas a assegurar os direitos relativos à saúde, à previdência e à assistência social.'
+  },
+  {
+    id: 'q7',
+    subject: 'Conhecimentos Bancários',
+    text: '(Banco do Brasil / Caixa) O Conselho Monetário Nacional (CMN) é o órgão superior do Sistema Financeiro Nacional. Qual das alternativas NÃO é uma de suas funções?',
+    options: [
+      'Adaptar o volume dos meios de pagamento às reais necessidades da economia.',
+      'Regular o valor interno da moeda.',
+      'Executar a emissão de papel-moeda.',
+      'Zelar pela liquidez e solvência das instituições financeiras.'
+    ],
+    correctOptionIndex: 2,
+    explanation: 'O CMN é um órgão normativo. A execução da emissão de papel-moeda é função do Banco Central do Brasil (Bacen), e não do CMN.'
+  },
+  {
+    id: 'q8',
+    subject: 'Direito Penal',
+    text: '(Polícia Federal) O funcionário público que se apropria de dinheiro, valor ou qualquer outro bem móvel, público ou particular, de que tem a posse em razão do cargo, comete o crime de:',
+    options: [
+      'Corrupção passiva.',
+      'Concussão.',
+      'Peculato.',
+      'Prevaricação.'
+    ],
+    correctOptionIndex: 2,
+    explanation: 'O crime descrito é o Peculato (art. 312 do CP). A corrupção passiva envolve solicitar ou receber vantagem; a concussão envolve exigir; a prevaricação é retardar ou deixar de praticar ato de ofício.'
+  },
+  {
+    id: 'q9',
+    subject: 'Direito Tributário',
+    text: '(Receita Federal) É imposto de competência exclusiva da União:',
+    options: [
+      'Imposto sobre a Propriedade de Veículos Automotores (IPVA).',
+      'Imposto sobre Serviços de Qualquer Natureza (ISS).',
+      'Imposto sobre Produtos Industrializados (IPI).',
+      'Imposto sobre a Propriedade Predial e Territorial Urbana (IPTU).'
+    ],
+    correctOptionIndex: 2,
+    explanation: 'O IPI é de competência da União (Art. 153, IV, CF). O IPVA é Estadual, e o ISS e o IPTU são Municipais.'
+  },
+  {
+    id: 'q10',
+    subject: 'Informática',
+    text: 'O tipo de malware que restringe o acesso ao sistema infectado com uma espécie de bloqueio e cobra um resgate (geralmente em criptomoedas) para que o acesso possa ser restabelecido é conhecido como:',
+    options: [
+      'Phishing.',
+      'Ransomware.',
+      'Spyware.',
+      'Trojan.'
+    ],
+    correctOptionIndex: 1,
+    explanation: 'Ransomware é um software malicioso que sequestra dados ou sistemas, exigindo pagamento (resgate/ransom) para a liberação.'
+  },
+  {
+    id: 'q11',
+    subject: 'Direito Administrativo',
+    text: 'Os requisitos (ou elementos) essenciais de validade do ato administrativo são:',
+    options: [
+      'Competência, Finalidade, Forma, Motivo e Objeto.',
+      'Presunção de Legitimidade, Imperatividade e Autoexecutoriedade.',
+      'Legalidade, Impessoalidade, Moralidade, Publicidade e Eficiência.',
+      'Razoabilidade, Proporcionalidade, Motivação e Ampla Defesa.'
+    ],
+    correctOptionIndex: 0,
+    explanation: 'Os requisitos do ato administrativo são Competência, Finalidade, Forma, Motivo e Objeto (mnemônico COFIFOMOB). A alternativa B traz os atributos do ato, e a C traz os princípios da Administração.'
+  },
+  {
+    id: 'q12',
+    subject: 'Direito Constitucional',
+    text: 'O remédio constitucional gratuito, destinado a assegurar o conhecimento de informações relativas à pessoa do impetrante, constantes de registros ou bancos de dados de entidades governamentais ou de caráter público é o:',
+    options: [
+      'Habeas Corpus.',
+      'Mandado de Segurança.',
+      'Habeas Data.',
+      'Mandado de Injunção.'
+    ],
+    correctOptionIndex: 2,
+    explanation: 'O Habeas Data (Art. 5º, LXXII, CF) é o remédio constitucional para garantir o conhecimento ou retificação de informações pessoais em bancos de dados públicos ou de caráter público.'
   }
 ];
+
+const shuffleArray = (array: any[]) => {
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+};
 
 export default function Simulation() {
   const { user, profile } = useAuth();
@@ -109,7 +209,8 @@ export default function Simulation() {
     // Determine number of questions based on plan
     const numQuestions = profile?.plan === 'free' ? 5 : 10;
     // In a real app, fetch random questions from Firestore here
-    setQuestions(MOCK_QUESTIONS.slice(0, numQuestions));
+    const shuffled = shuffleArray(MOCK_QUESTIONS);
+    setQuestions(shuffled.slice(0, numQuestions));
     setTimeLeft(numQuestions * 60 * 2); // 2 minutes per question
     setIsStarted(true);
     setAnswers({});

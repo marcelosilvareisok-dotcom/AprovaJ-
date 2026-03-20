@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router';
-import { BookOpen, Trophy, Target, TrendingUp, Clock, AlertCircle } from 'lucide-react';
+import { BookOpen, Trophy, Target, TrendingUp, Clock, AlertCircle, Briefcase } from 'lucide-react';
 import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
 import { db } from '../firebase';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+
+const TRENDING_EXAMS = [
+  { name: 'INSS', vagas: '9.229 vagas previstas', bg: 'bg-blue-50', border: 'border-blue-100', text: 'text-blue-900', sub: 'text-blue-700' },
+  { name: 'Caixa Econômica', vagas: '4.000 vagas', bg: 'bg-sky-50', border: 'border-sky-100', text: 'text-sky-900', sub: 'text-sky-700' },
+  { name: 'Polícia Federal', vagas: '2.599 solicitadas', bg: 'bg-slate-100', border: 'border-slate-200', text: 'text-slate-900', sub: 'text-slate-700' },
+  { name: 'Receita Federal', vagas: 'Auditor e Analista', bg: 'bg-emerald-50', border: 'border-emerald-100', text: 'text-emerald-900', sub: 'text-emerald-700' },
+];
 
 export default function Dashboard() {
   const { profile, user } = useAuth();
@@ -94,6 +101,21 @@ export default function Dashboard() {
             {profile.plan === 'free' ? 'Faça upgrade para Premium' : `Plano ${profile.plan.toUpperCase()} ativo`}
           </p>
         </Link>
+      </div>
+
+      {/* Trending Exams */}
+      <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+        <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+          <Briefcase className="w-5 h-5 text-indigo-600" /> Concursos em Alta (Atualizados)
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {TRENDING_EXAMS.map((exam, i) => (
+            <div key={i} className={`p-4 rounded-2xl border ${exam.bg} ${exam.border} hover:shadow-md transition-all cursor-pointer`}>
+              <h4 className={`font-bold ${exam.text} mb-1`}>{exam.name}</h4>
+              <p className={`text-xs font-medium ${exam.sub}`}>{exam.vagas}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Recent Activity */}
