@@ -25,6 +25,21 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      let errorMessage = this.state.error?.message || "Ocorreu um erro inesperado.";
+      
+      try {
+        if (this.state.error?.message) {
+          const parsedError = JSON.parse(this.state.error.message);
+          if (parsedError.error && parsedError.error.includes("Missing or insufficient permissions")) {
+            errorMessage = "Você não tem permissão para acessar ou modificar estes dados. Verifique se você está logado corretamente.";
+          } else if (parsedError.error) {
+            errorMessage = parsedError.error;
+          }
+        }
+      } catch (e) {
+        // Not a JSON error message, use default
+      }
+
       return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
           <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-slate-100 text-center">
@@ -35,7 +50,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </div>
             <h1 className="text-2xl font-bold text-slate-900 mb-2">Ops, algo deu errado</h1>
             <p className="text-slate-500 mb-6">
-              {this.state.error?.message || "Ocorreu um erro inesperado."}
+              {errorMessage}
             </p>
             <button
               onClick={() => window.location.reload()}

@@ -4,6 +4,7 @@ import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Trophy, Target, TrendingUp, BookOpen, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router';
+import { handleFirestoreError, OperationType } from '../utils/firestoreErrorHandler';
 
 export default function Results() {
   const { user, profile } = useAuth();
@@ -23,7 +24,7 @@ export default function Results() {
         const sims = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setSimulations(sims);
       } catch (error) {
-        console.error("Erro ao buscar resultados:", error);
+        handleFirestoreError(error, OperationType.GET, 'simulations');
       } finally {
         setLoading(false);
       }

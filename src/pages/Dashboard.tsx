@@ -6,6 +6,7 @@ import { collection, query, where, getDocs, orderBy, limit } from 'firebase/fire
 import { db } from '../firebase';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { handleFirestoreError, OperationType } from '../utils/firestoreErrorHandler';
 
 const TRENDING_EXAMS = [
   { name: 'INSS', vagas: '9.229 vagas previstas', bg: 'bg-blue-50', border: 'border-blue-100', text: 'text-blue-900', sub: 'text-blue-700' },
@@ -33,7 +34,7 @@ export default function Dashboard() {
         const sims = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setRecentSimulations(sims);
       } catch (error) {
-        console.error("Erro ao buscar simulados:", error);
+        handleFirestoreError(error, OperationType.GET, 'simulations');
       } finally {
         setLoading(false);
       }

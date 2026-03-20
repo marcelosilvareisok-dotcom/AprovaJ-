@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { handleFirestoreError, OperationType } from '../utils/firestoreErrorHandler';
 
 interface UserProfile {
   uid: string;
@@ -60,18 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setProfile(newProfile);
           }
         } catch (error) {
-          console.error("Error fetching or creating user profile:", error);
-          // Fallback profile so the user can still use the app
-          setProfile({
-            uid: currentUser.uid,
-            email: currentUser.email || '',
-            displayName: currentUser.displayName || '',
-            plan: 'free',
-            level: 1,
-            xp: 0,
-            totalSimulations: 0,
-            createdAt: new Date(),
-          });
+          handleFirestoreError(error, OperationType.GET, `users/${currentUser.uid}`);
         }
       } else {
         setProfile(null);
