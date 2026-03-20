@@ -1,0 +1,77 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the AprovaJá platform",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user's unique ID" },
+        "email": { "type": "string", "format": "email", "description": "The user's email address" },
+        "displayName": { "type": "string", "description": "The user's display name" },
+        "plan": { "type": "string", "enum": ["free", "basic", "premium"], "description": "The user's subscription plan" },
+        "level": { "type": "number", "description": "The user's gamification level" },
+        "xp": { "type": "number", "description": "The user's experience points" },
+        "totalSimulations": { "type": "number", "description": "Total simulations completed" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the user was created" }
+      },
+      "required": ["uid", "email", "plan", "level", "xp", "totalSimulations", "createdAt"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "A multiple-choice question for a simulation",
+      "type": "object",
+      "properties": {
+        "subject": { "type": "string", "description": "The subject of the question (e.g., Portuguese, Math, Law)" },
+        "text": { "type": "string", "description": "The question text" },
+        "options": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "The possible answers"
+        },
+        "correctOptionIndex": { "type": "number", "description": "The index of the correct option (0-4)" },
+        "explanation": { "type": "string", "description": "Explanation for the correct answer" },
+        "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"], "description": "Difficulty level" }
+      },
+      "required": ["subject", "text", "options", "correctOptionIndex", "explanation", "difficulty"]
+    },
+    "SimulationResult": {
+      "title": "Simulation Result",
+      "description": "The result of a completed simulation by a user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The ID of the user who took the simulation" },
+        "score": { "type": "number", "description": "The total score achieved" },
+        "totalQuestions": { "type": "number", "description": "Total number of questions in the simulation" },
+        "timeSpentSeconds": { "type": "number", "description": "Time spent on the simulation in seconds" },
+        "subjectsPerformance": {
+          "type": "object",
+          "description": "Performance breakdown by subject. Keys are subjects, values are objects with correct and total counts.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "correct": { "type": "number" },
+              "total": { "type": "number" }
+            },
+            "required": ["correct", "total"]
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the simulation was completed" }
+      },
+      "required": ["userId", "score", "totalQuestions", "timeSpentSeconds", "subjectsPerformance", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profiles and progress"
+    },
+    "/questions/{questionId}": {
+      "schema": { "$ref": "#/entities/Question" },
+      "description": "Stores the question bank"
+    },
+    "/simulations/{simulationId}": {
+      "schema": { "$ref": "#/entities/SimulationResult" },
+      "description": "Stores the results of user simulations"
+    }
+  }
+}
